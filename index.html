@@ -347,14 +347,30 @@
     }
 
     @media (max-width: 520px) {
+      body {
+        padding: 16px;
+      }
+      .container {
+        width: 100%;
+        padding: 24px 18px 32px;
+        border-radius: 20px;
+        box-shadow: 0 12px 26px rgba(255, 105, 180, 0.14),
+          0 6px 16px rgba(0, 0, 0, 0.08);
+      }
       .buttons {
-        height: 180px;
+        gap: 12px;
+        margin-top: 10px;
       }
       button {
-        width: 170px;
+        width: min(240px, 100%);
+        padding: 14px 18px;
+        font-size: 15px;
       }
       #no-btn {
         min-width: 110px;
+      }
+      .hug img {
+        width: min(260px, 90vw);
       }
     }
   </style>
@@ -393,6 +409,9 @@
     const loveBar = document.getElementById("love-bar");
     const loveFill = document.getElementById("love-fill");
     const floatingHearts = document.querySelector(".floating-hearts");
+
+    const isTouchDevice = window.matchMedia("(pointer:coarse)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const dodgeTexts = [
       "That hurt a little.",
@@ -467,13 +486,14 @@
 
     // Create gentle floating hearts in the background.
     function spawnFloatingHearts() {
-      for (let i = 0; i < 18; i++) {
+      const count = prefersReducedMotion ? 8 : isTouchDevice ? 12 : 18;
+      for (let i = 0; i < count; i++) {
         const h = document.createElement("div");
         h.className = "heart";
         h.style.left = Math.random() * 100 + "vw";
         h.style.bottom = Math.random() * 30 + "vh";
         h.style.animationDelay = Math.random() * 6 + "s";
-        h.style.animationDuration = 10 + Math.random() * 6 + "s";
+        h.style.animationDuration = (prefersReducedMotion ? 9 : 10) + Math.random() * 4 + "s";
         h.style.opacity = 0.4 + Math.random() * 0.4;
         floatingHearts.appendChild(h);
       }
@@ -496,6 +516,7 @@
     }
 
     function handleMouseMove(e) {
+      if (isTouchDevice || prefersReducedMotion) return;
       makeCursorHeart(e.clientX, e.clientY);
     }
 
@@ -510,7 +531,8 @@
 
     function triggerConfetti() {
       const colors = ["#ff6b9a", "#ff99c8", "#ffd166", "#ff5f8f", "#ff85a1"];
-      for (let i = 0; i < 90; i++) {
+      const count = prefersReducedMotion ? 35 : isTouchDevice ? 60 : 90;
+      for (let i = 0; i < count; i++) {
         const c = document.createElement("div");
         c.className = "confetti";
         c.style.background = colors[i % colors.length];
@@ -526,7 +548,8 @@
     }
 
     function triggerHearts() {
-      for (let i = 0; i < 28; i++) {
+      const count = prefersReducedMotion ? 14 : isTouchDevice ? 20 : 28;
+      for (let i = 0; i < count; i++) {
         const h = document.createElement("div");
         h.className = "pop-heart";
         h.style.left = window.innerWidth / 2 + (Math.random() - 0.5) * 220 + "px";
